@@ -1,5 +1,179 @@
 \documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+
+\title{Algorytmy Hashowania}
+\author{Kamil Filipiński, 66140}
+\date{}
+
 \begin{document}
-First document. This is a simple example, with no 
-extra parameters or packages included.
+
+\maketitle
+
+\section{Omówienie problemu}
+Algorytmy hashowania są fundamentalnymi narzędziami w kryptografii i innych dziedzinach informatyki. Umożliwiają one efektywne przechowywanie, przetwarzanie i zabezpieczanie danych. Hashowanie jest procesem przekształcania danych wejściowych (np. hasła) na ciąg znaków o ustalonej długości, zwany hashem. Hashe są wykorzystywane m.in. do przechowywania haseł, sprawdzania integralności danych oraz w kryptowalutach. W tym kontekście kluczowe jest zapewnienie, aby hash był odporny na ataki kryptograficzne, takie jak ataki brute-force i kolizje.
+
+\section{Przegląd algorytmów hashowania}
+
+\subsection{B-Crypt}
+\textbf{Zastosowania:} B-Crypt jest najczęściej używany do bezpiecznego przechowywania haseł. Jego odporność na ataki brute-force i rainbow table sprawia, że jest preferowany w aplikacjach wymagających wysokiego poziomu bezpieczeństwa.
+
+\textbf{Działanie:}
+\begin{itemize}
+    \item B-Crypt bazuje na algorytmie Blowfish i jest specjalnie zaprojektowany do ochrony haseł.
+    \item Wykorzystuje salt - losowe dane dodawane do hasła przed jego hashowaniem, co sprawia, że dwa identyczne hasła będą miały różne hashe.
+    \item Zawiera parametr kosztu, który kontroluje, jak długo trwa proces hashowania. Wyższy koszt oznacza dłuższy czas hashowania, co zwiększa bezpieczeństwo przed atakami brute-force.
+\end{itemize}
+
+B-Crypt jest szczególnie ceniony za swoją elastyczność i możliwość dostosowania parametrów hashowania, co pozwala na zwiększenie bezpieczeństwa wraz ze wzrostem mocy obliczeniowej atakujących.
+
+\textbf{Implementacja:}
+\begin{lstlisting}[language=Python]
+import bcrypt
+
+# Hashowanie hasla
+password = b"supersecret"
+hashed = bcrypt.hashpw(password, bcrypt.gensalt())
+
+# Weryfikacja hasla
+if bcrypt.checkpw(password, hashed):
+    print("Password matches")
+else:
+    print("Password does not match")
+\end{lstlisting}
+
+\subsection{SHA-256}
+\textbf{Zastosowania:} SHA-256 jest szeroko używany w kryptowalutach (np. Bitcoin), cyfrowych podpisach, certyfikatach SSL oraz w innych zastosowaniach wymagających bezpiecznego hashowania danych.
+
+\textbf{Działanie:}
+\begin{itemize}
+    \item SHA-256 należy do rodziny SHA-2 i jest zaprojektowany przez NSA.
+    \item Produkuje 256-bitowe (32-bajtowe) hashe, co zapewnia wysoki poziom bezpieczeństwa.
+    \item Algorytm jest odporny na ataki kolizyjne, co oznacza, że znalezienie dwóch różnych wejść dających ten sam hash jest bardzo trudne.
+\end{itemize}
+
+SHA-256 jest powszechnie używany ze względu na swoje bezpieczeństwo i wydajność. Jest kluczowym elementem w technologii blockchain, gdzie zapewnia integralność transakcji.
+
+\textbf{Implementacja:}
+\begin{lstlisting}[language=Python]
+import hashlib
+
+# Hashowanie wiadomosci
+message = "hello world"
+hashed = hashlib.sha256(message.encode()).hexdigest()
+
+print(hashed)
+\end{lstlisting}
+
+\subsection{MD5}
+\textbf{Zastosowania:} MD5 był kiedyś powszechnie używany do sprawdzania integralności plików i danych oraz przechowywania haseł, ale ze względu na swoje słabe strony, jest teraz uważany za przestarzały.
+
+\textbf{Działanie:}
+\begin{itemize}
+    \item Produkuje 128-bitowe (16-bajtowe) hashe.
+    \item Znany jest z podatności na kolizje, co oznacza, że jest możliwe znalezienie dwóch różnych wejść dających ten sam hash.
+    \item Został zaprojektowany przez Ronalda Rivesta w 1991 roku jako następca algorytmu MD4.
+\end{itemize}
+
+MD5 jest obecnie uważany za niewystarczająco bezpieczny do większości zastosowań kryptograficznych. Pomimo to, jest nadal używany w niektórych starszych systemach ze względu na swoją prostotę i szybkość.
+
+\textbf{Implementacja:}
+\begin{lstlisting}[language=Python]
+import hashlib
+
+# Hashowanie wiadomosci
+message = "hello world"
+hashed = hashlib.md5(message.encode()).hexdigest()
+
+print(hashed)
+\end{lstlisting}
+
+\subsection{SHA-1}
+\textbf{Zastosowania:} SHA-1 był kiedyś szeroko używany do cyfrowych podpisów i certyfikatów SSL, ale z powodu znanych słabości bezpieczeństwa, jego użycie jest obecnie odradzane.
+
+\textbf{Działanie:}
+\begin{itemize}
+    \item Produkuje 160-bitowe (20-bajtowe) hashe.
+    \item Znany jest z podatności na kolizje, a ataki praktyczne na SHA-1 zostały zaprezentowane, co znacznie zmniejszyło zaufanie do jego bezpieczeństwa.
+    \item SHA-1 został zaprojektowany przez NSA i opublikowany w 1993 roku.
+\end{itemize}
+
+Pomimo znanych problemów bezpieczeństwa, SHA-1 jest nadal używany w niektórych starszych systemach i aplikacjach, które nie zostały jeszcze zaktualizowane.
+
+\textbf{Implementacja:}
+\begin{lstlisting}[language=Python]
+import hashlib
+
+# Hashowanie wiadomosci
+message = "hello world"
+hashed = hashlib.sha1(message.encode()).hexdigest()
+
+print(hashed)
+\end{lstlisting}
+
+\subsection{Blake2}
+\textbf{Zastosowania:} Blake2 to nowoczesny algorytm hashowania używany do szerokiego zakresu zastosowań, takich jak podpisy cyfrowe, generowanie kluczy i inne zastosowania kryptograficzne.
+
+\textbf{Działanie:}
+\begin{itemize}
+    \item Blake2 jest szybszy niż MD5, SHA-1 i SHA-256, a jednocześnie zapewnia wysoki poziom bezpieczeństwa.
+    \item Dwa warianty: Blake2b (dla 64-bitowych systemów) i Blake2s (dla 32-bitowych systemów).
+    \item Blake2 został zaprojektowany, aby być prostym w implementacji, a jednocześnie bardzo bezpiecznym i wydajnym.
+\end{itemize}
+
+Blake2 jest szeroko stosowany w nowoczesnych systemach kryptograficznych ze względu na swoją efektywność i bezpieczeństwo.
+
+\textbf{Implementacja:}
+\begin{lstlisting}[language=Python]
+import hashlib
+
+# Hashowanie wiadomosci
+message = "hello world"
+hashed = hashlib.blake2b(message.encode()).hexdigest()
+
+print(hashed)
+\end{lstlisting}
+
+\section{Czas łamania algorytmów}
+
+Poniższa tabela przedstawia szacowany czas łamania różnych algorytmów hashowania dla wyrażeń o różnej długości:
+
+\begin{tabular}{|c|c|c|}
+\hline
+Algorytm & Czas łamania (8-znakowe haslo) & Czas łamania (16-znakowe haslo) \\
+\hline
+B-Crypt & Kilka lat & Miliony lat \\
+SHA-256 & Kilka godzin & Kilka tysięcy lat \\
+MD5 & Minuty & Kilka lat \\
+SHA-1 & Godziny & Kilka tysięcy lat \\
+Blake2 & Kilka godzin & Kilka tysięcy lat \\
+\hline
+\end{tabular}
+
+Warto zauważyć, że czas łamania hasła zależy od wielu czynników, takich jak moc obliczeniowa atakującego, długość i złożoność hasła oraz dodatkowe zabezpieczenia, takie jak użycie soli.
+
+\section{Wnioski}
+Algorytmy hashowania różnią się pod względem bezpieczeństwa i wydajności. B-Crypt jest obecnie uważany za jeden z najbezpieczniejszych algorytmów do przechowywania haseł, jednak jego użycie wiąże się z wyższym kosztem obliczeniowym. SHA-256, choć bardzo bezpieczny, jest mniej odporny na ataki brute-force w porównaniu do B-Crypt. Algorytmy takie jak MD5 i SHA-1, kiedyś popularne, są teraz uważane za przestarzałe i niebezpieczne z powodu znanych podatności na kolizje. Blake2 oferuje nowoczesne podejście, łącząc wysoką wydajność z bezpieczeństwem.
+
+\section{Referencje}
+\begin{itemize}
+    \item \url{https://www.overleaf.com/learn/latex/Learn_LaTeX_in_30_minutes}
+    \item \url{https://www.dobreprogramy.pl/programy-dla-studentow-jak-rozpoczac-prace-z-latex-em,6628431494375041a}
+    \item \url{https://maumneto.medium.com/git-vs-code-overleaf-91ecfd586b36}
+    \item \url{https://en.wikipedia.org/wiki/Cryptographic_hash_function}
+    \item \url{https://en.wikipedia.org/wiki/Bcrypt}
+    \item \url{https://en.wikipedia.org/wiki/SHA-2}
+    \item \url{https://en.wikipedia.org/wiki/MD5}
+    \item \url{https://en.wikipedia.org/wiki/SHA-1}
+    \item \url{https://en.wikipedia.org/wiki/BLAKE_(hash_function)}
+\end{itemize}
+
 \end{document}
